@@ -2,19 +2,23 @@ part of flutter_bluetooth_printer;
 
 class DiscoveryResult extends DiscoveryState {
   final List<BluetoothDevice> devices;
+
   DiscoveryResult({required this.devices});
 }
 
 enum PaperSize {
   // original is 384 => 48 * 8
-  mm58(360, 58, '58mm'),
-  mm80(576, 80, '80mm'),
-  mm72(512, 72, '72mm');
+  mm58(1, 360, 58, '58mm'),
+  mm72(2, 512, 72, '72mm'),
+  mm80(3, 576, 80, '80mm');
 
+  final int value;
   final int width;
   final double paperWidthMM;
   final String name;
+
   const PaperSize(
+    this.value,
     this.width,
     this.paperWidthMM,
     this.name,
@@ -24,8 +28,7 @@ enum PaperSize {
 class FlutterBluetoothPrinter {
   static Stream<DiscoveryState> _discovery() async* {
     final result = <BluetoothDevice>[];
-    await for (final state
-        in FlutterBluetoothPrinterPlatform.instance.discovery) {
+    await for (final state in FlutterBluetoothPrinterPlatform.instance.discovery) {
       if (state is BluetoothDevice) {
         result.add(state);
         yield DiscoveryResult(devices: result.toSet().toList());
@@ -125,12 +128,8 @@ class FlutterBluetoothPrinter {
       final printResult = await printBytes(
         keepConnected: true,
         address: address,
-        data: Uint8List.fromList([
-          ...imageData,
-          ...reset,
-          ...additional,
-          if (cutPaper) ...Commands.cutPaper
-        ]),
+        data: Uint8List.fromList(
+            [...imageData, ...reset, ...additional, if (cutPaper) ...Commands.cutPaper]),
         onProgress: onProgress,
         maxBufferSize: maxBufferSize,
         delayTime: delayTime,
