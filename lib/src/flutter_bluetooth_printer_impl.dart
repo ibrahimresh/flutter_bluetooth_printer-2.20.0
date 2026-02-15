@@ -7,17 +7,21 @@ class DiscoveryResult extends DiscoveryState {
 
 enum PaperSize {
   // original is 384 => 48 * 8
-  mm58(360, 58, 'Roll Paper 58mm'),
-  mm80(576, 80, 'Roll Paper 80mm');
+  mm58(1, 360, 58, '58mm'),
+  mm72(2, 512, 72, '72mm'),
+  mm80(3, 576, 80, '80mm');
 
+  final int value;
   final int width;
   final double paperWidthMM;
   final String name;
+
   const PaperSize(
-    this.width,
-    this.paperWidthMM,
-    this.name,
-  );
+      this.value,
+      this.width,
+      this.paperWidthMM,
+      this.name,
+      );
 }
 
 class FlutterBluetoothPrinter {
