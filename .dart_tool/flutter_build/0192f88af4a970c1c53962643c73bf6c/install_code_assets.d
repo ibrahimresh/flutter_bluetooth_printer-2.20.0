@@ -1,0 +1,1 @@
+ C:\\Users\\Ibrahim\\StudioProjects\\Mercato_Delegates\\.dart_tool\\flutter_build\\0192f88af4a970c1c53962643c73bf6c\\native_assets.json: 
