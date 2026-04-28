@@ -121,6 +121,7 @@ public class FlutterBluetoothPrinterPlugin implements FlutterPlugin, ActivityAwa
                     return false;
                 }
 
+
                 final boolean bluetooth = activity.checkSelfPermission(Manifest.permission.BLUETOOTH) == PackageManager.PERMISSION_GRANTED;
                 final boolean bluetoothScan = activity.checkSelfPermission(Manifest.permission.BLUETOOTH_SCAN) == PackageManager.PERMISSION_GRANTED;
                 final boolean bluetoothConnect = activity.checkSelfPermission(Manifest.permission.BLUETOOTH_CONNECT) == PackageManager.PERMISSION_GRANTED;
@@ -132,7 +133,7 @@ public class FlutterBluetoothPrinterPlugin implements FlutterPlugin, ActivityAwa
                 if (!request) return false;
                 activity.requestPermissions(new String[]{Manifest.permission.BLUETOOTH, Manifest.permission.BLUETOOTH_ADMIN, Manifest.permission.BLUETOOTH_SCAN, Manifest.permission.BLUETOOTH_CONNECT}, 919191);
             } else {
-                if(activity == null){
+                if (activity == null) {
                     return false;
                 }
 
@@ -205,7 +206,7 @@ public class FlutterBluetoothPrinterPlugin implements FlutterPlugin, ActivityAwa
                             if (bluetoothSocket == null) {
                                 final BluetoothDevice device = bluetoothAdapter.getRemoteDevice(address);
                                 UUID uuid = UUID.fromString("00001101-0000-1000-8000-00805f9b34fb");
-                                bluetoothSocket = device.cr9yMnTm4NSzvG9rrwjM2ec8xZgh1cafXH8(uuid);
+                                bluetoothSocket = device.createRfcommSocketToServiceRecord(uuid);
                                 bluetoothSocket.connect();
                                 connectedDevices.put(address, bluetoothSocket);
                             }
@@ -287,7 +288,7 @@ public class FlutterBluetoothPrinterPlugin implements FlutterPlugin, ActivityAwa
                             if (bluetoothSocket == null) {
                                 final BluetoothDevice device = bluetoothAdapter.getRemoteDevice(address);
                                 UUID uuid = UUID.fromString("00001101-0000-1000-8000-00805f9b34fb");
-                                bluetoothSocket = device.cr9yMnTm4NSzvG9rrwjM2ec8xZgh1cafXH8(uuid);
+                                bluetoothSocket = device.createRfcommSocketToServiceRecord(uuid);
                                 bluetoothSocket.connect();
                             }
 
