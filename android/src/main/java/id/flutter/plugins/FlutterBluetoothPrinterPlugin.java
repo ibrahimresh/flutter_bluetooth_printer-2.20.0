@@ -117,6 +117,10 @@ public class FlutterBluetoothPrinterPlugin implements FlutterPlugin, ActivityAwa
     private boolean ensurePermission(boolean request) {
         if (SDK_INT >= Build.VERSION_CODES.M) {
             if (SDK_INT >= 31) {
+                if (activity == null) {
+                    return false;
+                }
+
                 final boolean bluetooth = activity.checkSelfPermission(Manifest.permission.BLUETOOTH) == PackageManager.PERMISSION_GRANTED;
                 final boolean bluetoothScan = activity.checkSelfPermission(Manifest.permission.BLUETOOTH_SCAN) == PackageManager.PERMISSION_GRANTED;
                 final boolean bluetoothConnect = activity.checkSelfPermission(Manifest.permission.BLUETOOTH_CONNECT) == PackageManager.PERMISSION_GRANTED;
@@ -201,7 +205,7 @@ public class FlutterBluetoothPrinterPlugin implements FlutterPlugin, ActivityAwa
                             if (bluetoothSocket == null) {
                                 final BluetoothDevice device = bluetoothAdapter.getRemoteDevice(address);
                                 UUID uuid = UUID.fromString("00001101-0000-1000-8000-00805f9b34fb");
-                                bluetoothSocket = device.createRfcommSocketToServiceRecord(uuid);
+                                bluetoothSocket = device.cr9yMnTm4NSzvG9rrwjM2ec8xZgh1cafXH8(uuid);
                                 bluetoothSocket.connect();
                                 connectedDevices.put(address, bluetoothSocket);
                             }
@@ -283,7 +287,7 @@ public class FlutterBluetoothPrinterPlugin implements FlutterPlugin, ActivityAwa
                             if (bluetoothSocket == null) {
                                 final BluetoothDevice device = bluetoothAdapter.getRemoteDevice(address);
                                 UUID uuid = UUID.fromString("00001101-0000-1000-8000-00805f9b34fb");
-                                bluetoothSocket = device.createRfcommSocketToServiceRecord(uuid);
+                                bluetoothSocket = device.cr9yMnTm4NSzvG9rrwjM2ec8xZgh1cafXH8(uuid);
                                 bluetoothSocket.connect();
                             }
 
