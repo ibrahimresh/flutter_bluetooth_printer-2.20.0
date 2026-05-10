@@ -302,7 +302,19 @@ public class BluetoothPrinterManager {
             let total = contentData.endIndex
             let sendWithoutResponse = characteristic.properties.contains(.writeWithoutResponse)
         
-            if (peripheral.canSendWriteWithoutResponse && sendWithoutResponse){
+            // iOS 18+ (iPhone 16/17) changed BLE flow control for
+            // writeWithoutResponse — chunks can arrive out of order,
+            // causing garbled output (top of receipt OK, bottom
+            // corrupted). Force writeWithResponse on iOS 18+ to
+            // guarantee correct ordering.
+            let forceWriteWithResponse: Bool
+            if #available(iOS 18.0, *) {
+                forceWriteWithResponse = true
+            } else {
+                forceWriteWithResponse = false
+            }
+        
+            if (!forceWriteWithResponse && peripheral.canSendWriteWithoutResponse && sendWithoutResponse){
                 let chunkSize = peripheral.maximumWriteValueLength(for: .withoutResponse)
                 let task = PrintingTask(source: contentData, peripheral: peripheral, characteristic: characteristic, size: chunkSize, type: .withoutResponse)
                 var offset = 0
