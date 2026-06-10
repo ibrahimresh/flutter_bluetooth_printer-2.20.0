@@ -25,6 +25,22 @@ enum PaperSize {
 }
 
 class FlutterBluetoothPrinter {
+  /// When `true`, the iOS native layer will use
+  /// `writeWithResponse` (ACK per chunk) instead of
+  /// `writeWithoutResponse` (fire-and-forget).
+  ///
+  /// Set this to `true` on iPhone 17 / iOS 19+ where
+  /// `writeWithoutResponse` causes garbled output.
+  /// Leave `false` (default) on all other devices.
+  ///
+  /// Example:
+  /// ```dart
+  /// // In your app, before calling print:
+  /// final iosVersion = ...; // detect iOS version
+  /// FlutterBluetoothPrinter.forceWriteWithResponse = iosVersion >= 19;
+  /// ```
+  static bool forceWriteWithResponse = false;
+
   static Stream<DiscoveryState> _discovery() async* {
     final result = <BluetoothDevice>[];
     await for (final state

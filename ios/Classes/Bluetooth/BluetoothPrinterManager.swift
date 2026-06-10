@@ -290,7 +290,7 @@ public class BluetoothPrinterManager {
         }
     }
 
-    public func print(_ content: ESCPOSCommandsCreator, encoding: String.Encoding = String.GBEncoding.GB_18030_2000, progressBlock: ((Int, Int) -> ())? = nil, completeBlock: ((PError?) -> ())? = nil) {
+    public func print(_ content: ESCPOSCommandsCreator, forceWriteWithResponse: Bool = false, encoding: String.Encoding = String.GBEncoding.GB_18030_2000, progressBlock: ((Int, Int) -> ())? = nil, completeBlock: ((PError?) -> ())? = nil) {
             guard let peripheral = self.peripheralDelegate.writablePeripheral, let characteristic = self.peripheralDelegate.writablecharacteristic else {
 
                 completeBlock?(.deviceNotReady)
@@ -300,32 +300,16 @@ public class BluetoothPrinterManager {
             
             let contentData = content.data(using: encoding)[0]
             let total = contentData.endIndex
-
-            // Determine the best write strategy:
-            //
-            // - If the characteristic supports writeWithResponse
-            //   (`.write`), prefer it — each chunk is ACK'd by the
-            //   printer, guaranteeing correct ordering on all iOS
-            //   versions and all printer models.
-            //
-            // - If the characteristic ONLY supports
-            //   writeWithoutResponse, use that — it's the only
-            //   option. This is the fast fire-and-forget path that
-            //   most printers use and works well.
-            //
-            // The previous code always preferred writeWithoutResponse
-            // when available, which caused garbled output on iPhone 17
-            // with certain printers (X10) where iOS 18+ reorders
-            // rapid fire-and-forget BLE writes.
-            //
-            // Printers that only expose writeWithoutResponse (like
-            // the Mercato/V2.2ATF) are unaffected by this change —
-            // they stay on the fast path as before.
-            let supportsWrite = characteristic.properties.contains(.write)
-            let supportsWriteWithout = characteristic.properties.contains(.writeWithoutResponse)
-            let useWithoutResponse = !supportsWrite && supportsWriteWithout
-
-            if (useWithoutResponse && peripheral.canSendWriteWithoutResponse){
+            let sendWithoutResponse = characteristic.properties.contains(.writeWithoutResponse)
+        
+            // Original logic: use writeWithoutResponse when available.
+            // When forceWriteWithResponse is true (passed from Dart),
+            // skip the fast path and use writeWithResponse instead.
+            // This is controlled per-print from the Flutter app,
+            // allowing the app to force ACK'd writes only on
+            // specific devices (e.g. iPhone 17) while keeping all
+            // other devices on the fast path.
+            if (!forceWriteWithResponse && peripheral.canSendWriteWithoutResponse && sendWithoutResponse){
                 let chunkSize = peripheral.maximumWriteValueLength(for: .withoutResponse)
                 let task = PrintingTask(source: contentData, peripheral: peripheral, characteristic: characteristic, size: chunkSize, type: .withoutResponse)
                 var offset = 0

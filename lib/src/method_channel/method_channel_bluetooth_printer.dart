@@ -139,6 +139,7 @@ class MethodChannelBluetoothPrinter extends FlutterBluetoothPrinterPlatform {
         'keep_connected': keepConnected,
         'delay_time': delayTime,
         'max_buffer_size': maxBufferSize,
+        'force_write_with_response': FlutterBluetoothPrinter.forceWriteWithResponse,
       });
 
       _progressCallback = null;

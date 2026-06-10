@@ -135,6 +135,7 @@ public class SwiftFlutterBluetoothPrinterPlugin: NSObject, FlutterPlugin, Flutte
               let address = parameter["address"] as! NSString
               let data = parameter["data"] as! FlutterStandardTypedData
               let keepConnected = ((parameter["keep_connected"] as? Bool?) ?? false)!
+              let forceWriteWithResponse = ((parameter["force_write_with_response"] as? Bool?) ?? false)!
 
               let devices = self.bluetoothPrinterManager.nearbyPrinters
               var device: BluetoothPrinter?
@@ -155,6 +156,7 @@ public class SwiftFlutterBluetoothPrinterPlugin: NSObject, FlutterPlugin, Flutte
                   if self.bluetoothPrinterManager.canPrint {
                       let receipt = Receipt(data: data.data)
                       self.bluetoothPrinterManager.print(receipt,
+                                                         forceWriteWithResponse: forceWriteWithResponse,
                                                          progressBlock: { (sent, total) in
                           let data:[String:Any] = ["total": total, "progress": sent]
                           self.channel.invokeMethod("onPrintingProgress", arguments: data)
